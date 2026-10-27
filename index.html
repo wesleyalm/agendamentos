@@ -1,0 +1,232 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101010">
+  <title>Barbearia Elite | Agendamento</title>
+
+  <style>
+    :root {
+      --preto: #101010;
+      --dourado: #d4af37;
+      --branco: #ffffff;
+      --cinza: #b8b8b8;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: var(--preto);
+      color: var(--branco);
+      font-family: Arial, Helvetica, sans-serif;
+      display: flex;
+      flex-direction: column;
+    }
+
+    header {
+      text-align: center;
+      padding: 45px 20px 30px;
+      border-bottom: 1px solid #393122;
+    }
+
+    .logo {
+      width: 125px;
+      height: 125px;
+      margin: 0 auto 20px;
+      border: 2px solid var(--dourado);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      background: #202020;
+    }
+
+    .logo img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .logo-placeholder {
+      color: var(--dourado);
+      font-size: 48px;
+    }
+
+    h1 {
+      color: var(--dourado);
+      font-size: 27px;
+      letter-spacing: 2px;
+      margin: 0 0 10px;
+    }
+
+    .subtitulo {
+      color: var(--cinza);
+      font-size: 14px;
+      margin: 0;
+    }
+
+    main {
+      width: 100%;
+      max-width: 480px;
+      margin: auto;
+      padding: 40px 25px;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 27px;
+      line-height: 1.3;
+      margin-bottom: 15px;
+    }
+
+    .descricao {
+      color: var(--cinza);
+      font-size: 15px;
+      line-height: 1.7;
+      margin-bottom: 35px;
+    }
+
+    .botao-agendar {
+      display: block;
+      width: 100%;
+      padding: 18px;
+      background: var(--dourado);
+      color: var(--preto);
+      text-decoration: none;
+      font-weight: bold;
+      font-size: 17px;
+      border-radius: 10px;
+      transition: background 0.2s;
+    }
+
+    .botao-agendar:hover {
+      background: #f0cc60;
+    }
+
+    .informacao {
+      margin-top: 20px;
+      color: #929292;
+      font-size: 12px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 25px 20px;
+      border-top: 1px solid #292929;
+    }
+
+    .urgencia {
+      color: #a8a8a8;
+      font-size: 12px;
+      text-decoration: underline;
+      text-underline-offset: 4px;
+    }
+
+    .credito {
+      margin-top: 25px;
+      color: #777;
+      font-size: 11px;
+    }
+
+    .credito span {
+      color: var(--dourado);
+    }
+  </style>
+</head>
+
+<body>
+
+  <header>
+    <div class="logo" id="areaLogo">
+      <span class="logo-placeholder">✂</span>
+    </div>
+
+    <h1>BARBEARIA ELITE</h1>
+    <p class="subtitulo">Seu estilo, nossa tradição.</p>
+  </header>
+
+  <main>
+    <h2>Seu próximo corte começa aqui.</h2>
+
+    <p class="descricao">
+      Agende seu atendimento de forma rápida e prática.
+      Escolha seu serviço, profissional e o melhor horário
+      para você.
+    </p>
+
+    <a class="botao-agendar" href="agendar.html">
+      AGENDAR HORÁRIO
+    </a>
+
+    <p class="informacao">
+      Sem cadastro e sem complicações.
+    </p>
+  </main>
+
+  <footer>
+    <a
+      class="urgencia"
+      id="linkUrgencia"
+      href="#"
+    >
+      Não encontrou um horário adequado? Fale conosco.
+    </a>
+
+    <div class="credito">
+      Uma solução <span>MWfix</span>
+    </div>
+  </footer>
+
+  <script>
+    // CONFIGURAÇÕES DA BARBEARIA
+    const configuracao = {
+      nome: "BARBEARIA ELITE",
+      slogan: "Seu estilo, nossa tradição.",
+      logo: "logo.png",
+      whatsapp: ""
+    };
+
+    document.querySelector("h1").textContent =
+      configuracao.nome;
+
+    document.querySelector(".subtitulo").textContent =
+      configuracao.slogan;
+
+    // Exibe a logo, caso exista.
+    const logo = new Image();
+
+    logo.onload = function () {
+      const area = document.getElementById("areaLogo");
+      area.replaceChildren(logo);
+    };
+
+    logo.src = configuracao.logo;
+
+    // Link para atendimento urgente.
+    const linkUrgencia =
+      document.getElementById("linkUrgencia");
+
+    if (configuracao.whatsapp) {
+      const mensagem =
+        "Olá! Gostaria de verificar a possibilidade " +
+        "de um encaixe para atendimento.";
+
+      linkUrgencia.href =
+        "https://wa.me/" +
+        configuracao.whatsapp +
+        "?text=" +
+        encodeURIComponent(mensagem);
+    } else {
+      linkUrgencia.style.display = "none";
+    }
+  </script>
+
+</body>
+</html>
