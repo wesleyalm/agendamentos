@@ -670,7 +670,7 @@ onAuthStateChanged(auth, async (usuario) => {
     }
 
     barbeariaId = dados.barbeariaId;
-
+    console.log("Barbearia vinculada:", JSON.stringify(barbeariaId));
     const barbearia = await getDoc(
       doc(db, "barbearias", barbeariaId)
     );
