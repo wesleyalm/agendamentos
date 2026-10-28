@@ -1,0 +1,817 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101010">
+<title>Agendamento | Barbearia Elite</title>
+
+<style>
+:root {
+  --preto: #101010;
+  --fundo: #191919;
+  --dourado: #d4af37;
+  --branco: #ffffff;
+  --cinza: #aaa;
+  --borda: #363636;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  background: var(--preto);
+  color: var(--branco);
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+}
+
+header {
+  text-align: center;
+  padding: 25px 15px;
+  border-bottom: 1px solid var(--borda);
+}
+
+.logo {
+  width: 80px;
+  height: 80px;
+  border: 2px solid var(--dourado);
+  border-radius: 50%;
+  margin: auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: var(--dourado);
+  font-size: 35px;
+}
+
+.logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+header h1 {
+  color: var(--dourado);
+  font-size: 20px;
+  margin: 15px 0 5px;
+}
+
+header p {
+  color: var(--cinza);
+  font-size: 13px;
+  margin: 0;
+}
+
+main {
+  max-width: 480px;
+  margin: auto;
+  padding: 25px 18px 45px;
+}
+
+.progresso {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 30px;
+}
+
+.barra {
+  height: 5px;
+  flex: 1;
+  background: #383838;
+  border-radius: 10px;
+}
+
+.barra.ativa {
+  background: var(--dourado);
+}
+
+.etapa { display: none; }
+
+.etapa.ativa { display: block; }
+
+h2 {
+  font-size: 23px;
+  margin: 0 0 8px;
+}
+
+.descricao {
+  color: var(--cinza);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.opcao {
+  display: block;
+  width: 100%;
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  color: var(--branco);
+  padding: 19px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  text-align: left;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.opcao.selecionada {
+  border-color: var(--dourado);
+  background: #30291a;
+}
+
+.opcao:disabled {
+  opacity: .35;
+  cursor: not-allowed;
+}
+
+.grade {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.grade .opcao {
+  text-align: center;
+  padding: 15px 5px;
+  margin: 0;
+  font-size: 14px;
+}
+
+.campo {
+  width: 100%;
+  padding: 17px;
+  border-radius: 9px;
+  border: 1px solid var(--borda);
+  background: var(--fundo);
+  color: white;
+  font-size: 16px;
+  margin-bottom: 15px;
+}
+
+.campo:focus {
+  outline: 1px solid var(--dourado);
+}
+
+.resumo {
+  background: var(--fundo);
+  border: 1px solid var(--borda);
+  border-radius: 12px;
+  padding: 18px;
+  margin: 20px 0;
+  line-height: 1.9;
+  font-size: 14px;
+}
+
+.resumo strong { color: var(--dourado); }
+
+.acoes {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+}
+
+.botao {
+  padding: 17px;
+  border-radius: 9px;
+  border: none;
+  font-size: 15px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.voltar {
+  width: 35%;
+  background: #303030;
+  color: white;
+}
+
+.avancar {
+  flex: 1;
+  background: var(--dourado);
+  color: #101010;
+}
+
+.botao:disabled {
+  opacity: .4;
+  cursor: not-allowed;
+}
+
+.aviso {
+  color: var(--cinza);
+  font-size: 12px;
+  text-align: center;
+  line-height: 1.6;
+}
+
+footer {
+  text-align: center;
+  padding: 25px 15px;
+  border-top: 1px solid var(--borda);
+}
+
+footer a {
+  color: var(--cinza);
+  font-size: 12px;
+  text-decoration: underline;
+}
+
+.credito {
+  color: #777;
+  font-size: 11px;
+  margin-top: 25px;
+}
+
+.credito span { color: var(--dourado); }
+
+.sucesso {
+  text-align: center;
+  padding: 35px 0;
+}
+
+.sucesso .icone {
+  color: var(--dourado);
+  font-size: 60px;
+}
+
+[hidden] { display: none !important; }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo" id="areaLogo">✂</div>
+  <h1 id="nomeBarbearia">BARBEARIA ELITE</h1>
+  <p>Agendamento online</p>
+</header>
+
+<main>
+
+<div class="progresso" id="progresso">
+  <div class="barra ativa"></div>
+  <div class="barra"></div>
+  <div class="barra"></div>
+  <div class="barra"></div>
+  <div class="barra"></div>
+</div>
+
+<!-- ETAPA 1: SERVIÇO -->
+<section class="etapa ativa" id="etapa1">
+  <h2>Qual serviço deseja?</h2>
+  <p class="descricao">
+    Selecione o atendimento que você deseja realizar.
+  </p>
+
+  <div id="listaServicos"></div>
+
+  <div class="acoes">
+    <button class="botao voltar"
+      onclick="location.href='index.html'">
+      Voltar
+    </button>
+    <button class="botao avancar"
+      id="avancar1"
+      onclick="proximaEtapa()" disabled>
+      Continuar
+    </button>
+  </div>
+</section>
+
+<!-- ETAPA 2: PROFISSIONAL -->
+<section class="etapa" id="etapa2">
+  <h2>Escolha seu barbeiro</h2>
+  <p class="descricao">
+    Selecione o profissional de sua preferência.
+  </p>
+
+  <div id="listaBarbeiros"></div>
+
+  <div class="acoes">
+    <button class="botao voltar"
+      onclick="etapaAnterior()">Voltar</button>
+    <button class="botao avancar"
+      id="avancar2"
+      onclick="proximaEtapa()" disabled>
+      Continuar
+    </button>
+  </div>
+</section>
+
+<!-- ETAPA 3: DATA -->
+<section class="etapa" id="etapa3">
+  <h2>Escolha o dia</h2>
+  <p class="descricao">
+    Agendamentos disponíveis para os próximos
+    sete dias, incluindo hoje.
+  </p>
+
+  <div id="listaDias"></div>
+
+  <div class="acoes">
+    <button class="botao voltar"
+      onclick="etapaAnterior()">Voltar</button>
+    <button class="botao avancar"
+      id="avancar3"
+      onclick="proximaEtapa()" disabled>
+      Continuar
+    </button>
+  </div>
+</section>
+
+<!-- ETAPA 4: HORÁRIO -->
+<section class="etapa" id="etapa4">
+  <h2>Escolha o horário</h2>
+  <p class="descricao">
+    Selecione um horário disponível para
+    seu atendimento.
+  </p>
+
+  <div class="grade" id="listaHorarios"></div>
+
+  <p class="aviso" style="margin-top:20px">
+    Horários demonstrativos. A disponibilidade
+    real será ativada com o Firebase.
+  </p>
+
+  <div class="acoes">
+    <button class="botao voltar"
+      onclick="etapaAnterior()">Voltar</button>
+    <button class="botao avancar"
+      id="avancar4"
+      onclick="proximaEtapa()" disabled>
+      Continuar
+    </button>
+  </div>
+</section>
+
+<!-- ETAPA 5: IDENTIFICAÇÃO -->
+<section class="etapa" id="etapa5">
+  <h2>Seus dados</h2>
+  <p class="descricao">
+    Informe seu nome e WhatsApp para
+    identificar seu agendamento.
+  </p>
+
+  <form id="formAgendamento">
+    <label for="nome">Seu nome</label>
+    <input class="campo" id="nome"
+      type="text" autocomplete="name"
+      maxlength="80" minlength="2"
+      placeholder="Digite seu nome"
+      required>
+
+    <label for="telefone">WhatsApp com DDD</label>
+    <input class="campo" id="telefone"
+      type="tel" inputmode="numeric"
+      autocomplete="tel"
+      placeholder="Ex.: 88999999999"
+      required>
+
+    <div class="resumo" id="resumo"></div>
+
+    <p class="aviso">
+      Esta é uma simulação. Nenhum agendamento
+      será registrado nesta versão.
+    </p>
+
+    <div class="acoes">
+      <button type="button" class="botao voltar"
+        onclick="etapaAnterior()">Voltar</button>
+      <button type="submit" class="botao avancar">
+        Confirmar
+      </button>
+    </div>
+  </form>
+</section>
+
+<!-- TELA DE DEMONSTRAÇÃO -->
+<section class="etapa" id="etapa6">
+  <div class="sucesso">
+    <div class="icone">✓</div>
+    <h2>Simulação concluída!</h2>
+    <p class="descricao">
+      Você completou todas as etapas.
+      Nenhum horário foi reservado.
+    </p>
+    <div class="resumo" id="resumoFinal"></div>
+    <button class="botao avancar"
+      onclick="location.href='index.html'">
+      Voltar ao início
+    </button>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <a id="linkUrgencia" href="#" hidden>
+    Não encontrou um horário adequado?
+    Fale conosco.
+  </a>
+
+  <div class="credito">
+    Uma solução <span>MWfix</span>
+  </div>
+</footer>
+
+<script>
+// CONFIGURAÇÕES PROVISÓRIAS
+const configuracao = {
+  nome: "BARBEARIA ELITE",
+  logo: "logo.png",
+  whatsapp: "",
+
+  servicos: [
+    {id: "corte", nome: "Corte de cabelo", duracao: 30},
+    {id: "barba", nome: "Barba", duracao: 30},
+    {id: "combo", nome: "Cabelo + barba", duracao: 60},
+    {id: "luzes", nome: "Luzes", duracao: 120}
+  ],
+
+  barbeiros: [
+    {id: "joao", nome: "João"},
+    {id: "pedro", nome: "Pedro"},
+    {id: "carlos", nome: "Carlos"}
+  ],
+
+  abertura: "08:00",
+  fechamento: "18:00",
+  intervaloInicio: "12:00",
+  intervaloFim: "13:00"
+};
+
+let etapaAtual = 1;
+
+const escolha = {
+  servico: null,
+  barbeiro: null,
+  data: null,
+  horario: null
+};
+
+document.getElementById("nomeBarbearia")
+  .textContent = configuracao.nome;
+
+// LOGO
+const imagemLogo = new Image();
+imagemLogo.onload = () => {
+  document.getElementById("areaLogo")
+    .replaceChildren(imagemLogo);
+};
+imagemLogo.src = configuracao.logo;
+
+// WHATSAPP DE ENCAIXE
+if (configuracao.whatsapp) {
+  const link = document.getElementById("linkUrgencia");
+  const mensagem =
+    "Olá! Gostaria de verificar a possibilidade " +
+    "de um encaixe para atendimento.";
+
+  link.href = "https://wa.me/" +
+    configuracao.whatsapp +
+    "?text=" + encodeURIComponent(mensagem);
+
+  link.hidden = false;
+}
+
+// SELEÇÃO GENÉRICA
+function criarOpcoes(container, itens, campo, botaoId) {
+  const area = document.getElementById(container);
+  area.replaceChildren();
+
+  itens.forEach(item => {
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.className = "opcao";
+    botao.textContent = item.nome;
+
+    if (escolha[campo] === item.id) {
+      botao.classList.add("selecionada");
+    }
+
+    botao.onclick = () => {
+      escolha[campo] = item.id;
+
+      area.querySelectorAll(".opcao")
+        .forEach(b => b.classList.remove("selecionada"));
+
+      botao.classList.add("selecionada");
+
+      document.getElementById(botaoId).disabled = false;
+    };
+
+    area.appendChild(botao);
+  });
+}
+
+function renderizarServicos() {
+  criarOpcoes(
+    "listaServicos",
+    configuracao.servicos,
+    "servico",
+    "avancar1"
+  );
+}
+
+function renderizarBarbeiros() {
+  criarOpcoes(
+    "listaBarbeiros",
+    configuracao.barbeiros,
+    "barbeiro",
+    "avancar2"
+  );
+}
+
+// DATA LOCAL, SEM CONVERSÃO UTC
+function chaveData(data) {
+  const ano = data.getFullYear();
+  const mes = String(data.getMonth() + 1).padStart(2, "0");
+  const dia = String(data.getDate()).padStart(2, "0");
+  return `${ano}-${mes}-${dia}`;
+}
+
+function renderizarDias() {
+  const area = document.getElementById("listaDias");
+  area.replaceChildren();
+
+  const hoje = new Date();
+  hoje.setHours(0, 0, 0, 0);
+
+  for (let i = 0; i < 7; i++) {
+    const data = new Date(hoje);
+    data.setDate(hoje.getDate() + i);
+
+    const chave = chaveData(data);
+
+    const texto = data.toLocaleDateString("pt-BR", {
+      weekday: "long",
+      day: "2-digit",
+      month: "2-digit"
+    });
+
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.className = "opcao";
+    botao.textContent = i === 0 ? `Hoje — ${texto}` : texto;
+
+    if (escolha.data === chave) {
+      botao.classList.add("selecionada");
+    }
+
+    botao.onclick = () => {
+      escolha.data = chave;
+      escolha.horario = null;
+
+      area.querySelectorAll(".opcao")
+        .forEach(b => b.classList.remove("selecionada"));
+
+      botao.classList.add("selecionada");
+
+      document.getElementById("avancar3").disabled = false;
+      document.getElementById("avancar4").disabled = true;
+    };
+
+    area.appendChild(botao);
+  }
+}
+
+// CONVERTE HORAS PARA MINUTOS
+function paraMinutos(hora) {
+  const partes = hora.split(":").map(Number);
+  return partes[0] * 60 + partes[1];
+}
+
+function formatarHora(minutos) {
+  const h = Math.floor(minutos / 60);
+  const m = minutos % 60;
+
+  return String(h).padStart(2, "0") + ":" +
+    String(m).padStart(2, "0");
+}
+
+// HORÁRIOS DEMONSTRATIVOS
+function renderizarHorarios() {
+  const area = document.getElementById("listaHorarios");
+  area.replaceChildren();
+
+  escolha.horario = null;
+  document.getElementById("avancar4").disabled = true;
+
+  const servico = configuracao.servicos.find(
+    s => s.id === escolha.servico
+  );
+
+  if (!servico || !escolha.data) return;
+
+  const abertura = paraMinutos(configuracao.abertura);
+  const fechamento = paraMinutos(configuracao.fechamento);
+  const inicioAlmoco =
+    paraMinutos(configuracao.intervaloInicio);
+  const fimAlmoco =
+    paraMinutos(configuracao.intervaloFim);
+
+  const agora = new Date();
+  const hoje = chaveData(agora);
+  const minutosAgora =
+    agora.getHours() * 60 + agora.getMinutes();
+
+  let quantidade = 0;
+
+  for (
+    let inicio = abertura;
+    inicio + servico.duracao <= fechamento;
+    inicio += 30
+  ) {
+    const fim = inicio + servico.duracao;
+
+    // Não permitir atravessar o intervalo.
+    if (inicio < fimAlmoco && fim > inicioAlmoco) {
+      continue;
+    }
+
+    // Antecedência mínima de 30 minutos.
+    if (
+      escolha.data === hoje &&
+      inicio < minutosAgora + 30
+    ) {
+      continue;
+    }
+
+    const horario = formatarHora(inicio);
+
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.className = "opcao";
+    botao.textContent = horario;
+
+    botao.onclick = () => {
+      escolha.horario = horario;
+
+      area.querySelectorAll(".opcao")
+        .forEach(b => b.classList.remove("selecionada"));
+
+      botao.classList.add("selecionada");
+
+      document.getElementById("avancar4").disabled = false;
+    };
+
+    area.appendChild(botao);
+    quantidade++;
+  }
+
+  if (quantidade === 0) {
+    const aviso = document.createElement("p");
+    aviso.className = "descricao";
+    aviso.textContent =
+      "Nenhum horário demonstrativo disponível neste dia.";
+    area.appendChild(aviso);
+  }
+}
+
+// NAVEGAÇÃO
+function mostrarEtapa(numero) {
+  document.querySelectorAll(".etapa")
+    .forEach(e => e.classList.remove("ativa"));
+
+  document.getElementById("etapa" + numero)
+    .classList.add("ativa");
+
+  document.querySelectorAll(".barra")
+    .forEach((barra, indice) => {
+      barra.classList.toggle(
+        "ativa",
+        indice < Math.min(numero, 5)
+      );
+    });
+
+  document.getElementById("progresso").hidden =
+    numero === 6;
+
+  etapaAtual = numero;
+  window.scrollTo(0, 0);
+}
+
+function proximaEtapa() {
+  if (etapaAtual === 1 && !escolha.servico) return;
+  if (etapaAtual === 2 && !escolha.barbeiro) return;
+  if (etapaAtual === 3 && !escolha.data) return;
+  if (etapaAtual === 4 && !escolha.horario) return;
+
+  const proxima = etapaAtual + 1;
+
+  if (proxima === 4) renderizarHorarios();
+  if (proxima === 5) atualizarResumo();
+
+  mostrarEtapa(proxima);
+}
+
+function etapaAnterior() {
+  if (etapaAtual > 1) {
+    mostrarEtapa(etapaAtual - 1);
+  }
+}
+
+// RESUMO
+function dadosResumo() {
+  const servico = configuracao.servicos.find(
+    s => s.id === escolha.servico
+  );
+
+  const barbeiro = configuracao.barbeiros.find(
+    b => b.id === escolha.barbeiro
+  );
+
+  const partes = escolha.data.split("-").map(Number);
+  const data = new Date(
+    partes[0],
+    partes[1] - 1,
+    partes[2]
+  );
+
+  return {
+    servico: servico.nome,
+    barbeiro: barbeiro.nome,
+    data: data.toLocaleDateString("pt-BR"),
+    horario: escolha.horario
+  };
+}
+
+function atualizarResumo() {
+  const dados = dadosResumo();
+  const area = document.getElementById("resumo");
+
+  area.replaceChildren();
+
+  const linhas = [
+    ["Serviço", dados.servico],
+    ["Profissional", dados.barbeiro],
+    ["Data", dados.data],
+    ["Horário", dados.horario]
+  ];
+
+  linhas.forEach(([titulo, valor]) => {
+    const linha = document.createElement("div");
+    const destaque = document.createElement("strong");
+    destaque.textContent = titulo + ": ";
+
+    linha.appendChild(destaque);
+    linha.appendChild(document.createTextNode(valor));
+    area.appendChild(linha);
+  });
+}
+
+// CONFIRMAÇÃO SIMULADA
+document.getElementById("formAgendamento")
+  .addEventListener("submit", function(evento) {
+    evento.preventDefault();
+
+    const nome = document.getElementById("nome")
+      .value.trim();
+
+    const telefone = document.getElementById("telefone")
+      .value.replace(/\D/g, "");
+
+    if (nome.length < 2) {
+      alert("Informe seu nome.");
+      return;
+    }
+
+    if (telefone.length < 10 || telefone.length > 11) {
+      alert("Informe um WhatsApp válido com DDD.");
+      return;
+    }
+
+    const dados = dadosResumo();
+    const area = document.getElementById("resumoFinal");
+
+    area.replaceChildren();
+
+    const mensagem = document.createElement("p");
+    mensagem.textContent =
+      `${nome}, você simulou um agendamento de ` +
+      `${dados.servico} com ${dados.barbeiro}, ` +
+      `em ${dados.data}, às ${dados.horario}.`;
+
+    const aviso = document.createElement("p");
+    aviso.className = "aviso";
+    aviso.textContent =
+      "Este teste não salvou seu nome, telefone " +
+      "ou horário em nenhum banco de dados.";
+
+    area.append(mensagem, aviso);
+
+    mostrarEtapa(6);
+  });
+
+// INICIALIZAÇÃO
+renderizarServicos();
+renderizarBarbeiros();
+renderizarDias();
+</script>
+
+</body>
+</html>
