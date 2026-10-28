@@ -1,0 +1,719 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#101010">
+  <title>Gerência | MWfix Agendamentos</title>
+
+  <style>
+    :root {
+      --ouro: #d4af37;
+      --fundo: #101010;
+      --painel: #1d1d1d;
+      --borda: #383838;
+      --texto: #fff;
+      --cinza: #aaa;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      background: var(--fundo);
+      color: var(--texto);
+      font-family: Arial, sans-serif;
+    }
+
+    header {
+      background: #191919;
+      border-bottom: 1px solid var(--borda);
+      padding: 20px;
+    }
+
+    .topo {
+      max-width: 1000px;
+      margin: auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+    }
+
+    h1 {
+      color: var(--ouro);
+      font-size: 22px;
+      margin: 0;
+    }
+
+    .subtitulo {
+      color: var(--cinza);
+      font-size: 13px;
+      margin-top: 7px;
+    }
+
+    main {
+      max-width: 1000px;
+      margin: 30px auto;
+      padding: 0 16px;
+    }
+
+    .cabecalho {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+
+    h2 { margin: 0; font-size: 22px; }
+
+    .descricao {
+      color: var(--cinza);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    button {
+      border: none;
+      border-radius: 9px;
+      padding: 13px 17px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .primario {
+      background: var(--ouro);
+      color: #111;
+    }
+
+    .secundario {
+      background: #333;
+      color: white;
+    }
+
+    .perigo {
+      background: #582626;
+      color: #fff;
+    }
+
+    button:disabled {
+      opacity: .5;
+      cursor: wait;
+    }
+
+    .lista {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 16px;
+    }
+
+    .profissional {
+      background: var(--painel);
+      border: 1px solid var(--borda);
+      border-radius: 14px;
+      padding: 20px;
+    }
+
+    .perfil {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .foto {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      border: 2px solid var(--ouro);
+      object-fit: cover;
+      background: #333;
+    }
+
+    .avatar {
+      width: 65px;
+      height: 65px;
+      border-radius: 50%;
+      border: 2px solid var(--ouro);
+      display: grid;
+      place-items: center;
+      font-size: 26px;
+      color: var(--ouro);
+      background: #292929;
+    }
+
+    .nome {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 7px;
+    }
+
+    .status {
+      font-size: 13px;
+      color: #aaa;
+    }
+
+    .ativo { color: #80cf8b; }
+    .inativo { color: #ff9898; }
+
+    .horario {
+      color: var(--cinza);
+      font-size: 13px;
+      line-height: 1.7;
+      margin-bottom: 20px;
+    }
+
+    .acoes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .acoes button {
+      flex: 1;
+      padding: 11px 8px;
+      font-size: 12px;
+    }
+
+    .vazio {
+      color: var(--cinza);
+      background: var(--painel);
+      border: 1px solid var(--borda);
+      padding: 25px;
+      border-radius: 12px;
+    }
+
+    .modal-fundo {
+      position: fixed;
+      inset: 0;
+      background: #000c;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 15px;
+      z-index: 10;
+    }
+
+    .modal-fundo.aberto { display: flex; }
+
+    .modal {
+      background: #202020;
+      border: 1px solid #444;
+      border-radius: 16px;
+      padding: 24px;
+      width: 100%;
+      max-width: 500px;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal h2 {
+      color: var(--ouro);
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      margin: 16px 0 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 13px;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #111;
+      color: #fff;
+      font-size: 15px;
+    }
+
+    input:focus {
+      outline: 1px solid var(--ouro);
+    }
+
+    .duas-colunas {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .botoes-modal {
+      display: flex;
+      gap: 10px;
+      margin-top: 25px;
+    }
+
+    .botoes-modal button { flex: 1; }
+
+    .mensagem {
+      margin: 15px 0;
+      color: #ff9999;
+      font-size: 14px;
+    }
+
+    .carregando {
+      text-align: center;
+      color: var(--cinza);
+      padding: 50px;
+    }
+
+    @media (max-width: 480px) {
+      .duas-colunas { grid-template-columns: 1fr 1fr; }
+      .topo h1 { font-size: 18px; }
+    }
+  </style>
+</head>
+
+<body>
+
+<header>
+  <div class="topo">
+    <div>
+      <h1>MWfix | Gerência</h1>
+      <div class="subtitulo" id="nomeBarbearia">
+        Verificando acesso...
+      </div>
+    </div>
+    <button class="secundario" id="sair">
+      Sair
+    </button>
+  </div>
+</header>
+
+<main>
+  <div class="cabecalho">
+    <div>
+      <h2>Profissionais</h2>
+      <p class="descricao">
+        Cadastre, edite e controle os barbeiros da sua equipe.
+      </p>
+    </div>
+    <button class="primario" id="novo" disabled>
+      + Adicionar barbeiro
+    </button>
+  </div>
+
+  <div class="mensagem" id="mensagem"></div>
+
+  <div id="lista" class="lista">
+    <div class="carregando">
+      Carregando profissionais...
+    </div>
+  </div>
+</main>
+
+<div class="modal-fundo" id="modalFundo">
+  <div class="modal">
+    <h2 id="tituloModal">Novo barbeiro</h2>
+
+    <form id="formProfissional">
+      <label for="nome">Nome do barbeiro</label>
+      <input id="nome" required maxlength="80"
+        placeholder="Ex.: João">
+
+      <label for="foto">Endereço da foto no GitHub</label>
+      <input id="foto" type="url"
+        placeholder="https://wesleyalm.github.io/agendamentos/fotos/joao.jpg">
+
+      <p class="descricao">
+        A foto é opcional. Se não preencher, aparecerá
+        um avatar padrão.
+      </p>
+
+      <div class="duas-colunas">
+        <div>
+          <label for="inicio">Entrada</label>
+          <input id="inicio" type="time"
+            value="08:00" required>
+        </div>
+        <div>
+          <label for="fim">Saída</label>
+          <input id="fim" type="time"
+            value="18:00" required>
+        </div>
+        <div>
+          <label for="intervaloInicio">Início do intervalo</label>
+          <input id="intervaloInicio" type="time"
+            value="12:00" required>
+        </div>
+        <div>
+          <label for="intervaloFim">Fim do intervalo</label>
+          <input id="intervaloFim" type="time"
+            value="13:00" required>
+        </div>
+      </div>
+
+      <div class="mensagem" id="erroModal"></div>
+
+      <div class="botoes-modal">
+        <button type="button" class="secundario"
+          id="cancelar">Cancelar</button>
+        <button type="submit" class="primario"
+          id="salvar">Salvar</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+
+import {
+  getAuth,
+  onAuthStateChanged,
+  signOut
+} from
+  "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  collection,
+  onSnapshot,
+  addDoc,
+  updateDoc,
+  deleteDoc
+} from
+  "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDP9XvYYFU60mbmAbZQIPLBqjAekFb78Uk",
+  authDomain: "mwfix-agendamentos.firebaseapp.com",
+  projectId: "mwfix-agendamentos",
+  storageBucket: "mwfix-agendamentos.firebasestorage.app",
+  messagingSenderId: "821129339398",
+  appId: "1:821129339398:web:e9bd8e00ba5689d20c9987"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const lista = document.getElementById("lista");
+const mensagem = document.getElementById("mensagem");
+const modal = document.getElementById("modalFundo");
+const form = document.getElementById("formProfissional");
+
+let barbeariaId = null;
+let profissionaisRef = null;
+let profissionais = [];
+let editandoId = null;
+let cancelarEscuta = null;
+
+function mostrarErro(erro) {
+  console.error(erro);
+  mensagem.textContent =
+    "Não foi possível acessar os dados. " +
+    "Verifique as permissões do Firebase.";
+}
+
+function criarElemento(tag, classe, texto) {
+  const elemento = document.createElement(tag);
+  if (classe) elemento.className = classe;
+  if (texto !== undefined) elemento.textContent = texto;
+  return elemento;
+}
+
+function fotoPermitida(url) {
+  if (!url) return true;
+  try {
+    const endereco = new URL(url);
+    return endereco.protocol === "https:" &&
+      endereco.hostname === "wesleyalm.github.io" &&
+      endereco.pathname.startsWith("/agendamentos/fotos/");
+  } catch {
+    return false;
+  }
+}
+
+function renderizar() {
+  lista.replaceChildren();
+
+  if (!profissionais.length) {
+    lista.appendChild(criarElemento(
+      "div", "vazio",
+      "Nenhum profissional cadastrado."
+    ));
+    return;
+  }
+
+  profissionais.sort((a, b) =>
+    (a.nome || "").localeCompare(b.nome || "", "pt-BR")
+  );
+
+  for (const p of profissionais) {
+    const card = criarElemento("div", "profissional");
+    const perfil = criarElemento("div", "perfil");
+
+    if (p.foto && fotoPermitida(p.foto)) {
+      const imagem = criarElemento("img", "foto");
+      imagem.src = p.foto;
+      imagem.alt = "Foto de " + (p.nome || "profissional");
+      imagem.onerror = () => {
+        imagem.replaceWith(criarElemento("div", "avatar", "✂"));
+      };
+      perfil.appendChild(imagem);
+    } else {
+      perfil.appendChild(criarElemento("div", "avatar", "✂"));
+    }
+
+    const dados = criarElemento("div");
+    dados.appendChild(criarElemento("div", "nome", p.nome || "Sem nome"));
+    dados.appendChild(criarElemento(
+      "div",
+      "status " + (p.ativo ? "ativo" : "inativo"),
+      p.ativo ? "● Ativo" : "● Inativo"
+    ));
+    perfil.appendChild(dados);
+    card.appendChild(perfil);
+
+    card.appendChild(criarElemento(
+      "div", "horario",
+      `Expediente: ${p.inicio || "--:--"} às ${p.fim || "--:--"}
+Intervalo: ${p.intervaloInicio || "--:--"} às ${p.intervaloFim || "--:--"}`
+    ));
+
+    const acoes = criarElemento("div", "acoes");
+
+    const editar = criarElemento("button", "secundario", "Editar");
+    editar.onclick = () => abrirModal(p);
+    acoes.appendChild(editar);
+
+    const alternar = criarElemento(
+      "button",
+      p.ativo ? "secundario" : "primario",
+      p.ativo ? "Desativar" : "Ativar"
+    );
+
+    alternar.onclick = async () => {
+      alternar.disabled = true;
+      try {
+        await updateDoc(doc(profissionaisRef, p.id), {
+          ativo: !p.ativo
+        });
+      } catch (erro) {
+        mostrarErro(erro);
+      } finally {
+        alternar.disabled = false;
+      }
+    };
+
+    acoes.appendChild(alternar);
+
+    const excluir = criarElemento("button", "perigo", "Excluir");
+    excluir.onclick = async () => {
+      if (!confirm(
+        `Deseja realmente excluir ${p.nome}?`
+      )) return;
+
+      excluir.disabled = true;
+
+      try {
+        await deleteDoc(doc(profissionaisRef, p.id));
+      } catch (erro) {
+        mostrarErro(erro);
+        excluir.disabled = false;
+      }
+    };
+
+    acoes.appendChild(excluir);
+    card.appendChild(acoes);
+    lista.appendChild(card);
+  }
+}
+
+function abrirModal(profissional = null) {
+  editandoId = profissional?.id || null;
+  form.reset();
+
+  document.getElementById("tituloModal").textContent =
+    profissional ? "Editar barbeiro" : "Novo barbeiro";
+
+  document.getElementById("erroModal").textContent = "";
+
+  document.getElementById("nome").value =
+    profissional?.nome || "";
+
+  document.getElementById("foto").value =
+    profissional?.foto || "";
+
+  document.getElementById("inicio").value =
+    profissional?.inicio || "08:00";
+
+  document.getElementById("fim").value =
+    profissional?.fim || "18:00";
+
+  document.getElementById("intervaloInicio").value =
+    profissional?.intervaloInicio || "12:00";
+
+  document.getElementById("intervaloFim").value =
+    profissional?.intervaloFim || "13:00";
+
+  modal.classList.add("aberto");
+  document.getElementById("nome").focus();
+}
+
+function fecharModal() {
+  modal.classList.remove("aberto");
+  editandoId = null;
+}
+
+document.getElementById("novo").onclick = () => abrirModal();
+document.getElementById("cancelar").onclick = fecharModal;
+
+form.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+
+  const nome = document.getElementById("nome").value.trim();
+  const foto = document.getElementById("foto").value.trim();
+  const inicio = document.getElementById("inicio").value;
+  const fim = document.getElementById("fim").value;
+  const intervaloInicio =
+    document.getElementById("intervaloInicio").value;
+  const intervaloFim =
+    document.getElementById("intervaloFim").value;
+
+  const erroModal = document.getElementById("erroModal");
+
+  if (!nome) {
+    erroModal.textContent = "Informe o nome do profissional.";
+    return;
+  }
+
+  if (!fotoPermitida(foto)) {
+    erroModal.textContent =
+      "Use uma foto da pasta /agendamentos/fotos/ do GitHub Pages.";
+    return;
+  }
+
+  if (!(inicio < intervaloInicio &&
+        intervaloInicio < intervaloFim &&
+        intervaloFim < fim)) {
+    erroModal.textContent =
+      "Confira os horários de entrada, intervalo e saída.";
+    return;
+  }
+
+  const salvar = document.getElementById("salvar");
+  salvar.disabled = true;
+  erroModal.textContent = "";
+
+  const dados = {
+    nome,
+    foto,
+    inicio,
+    fim,
+    intervaloInicio,
+    intervaloFim
+  };
+
+  try {
+    if (editandoId) {
+      await updateDoc(doc(profissionaisRef, editandoId), dados);
+    } else {
+      await addDoc(profissionaisRef, {
+        ...dados,
+        ativo: true
+      });
+    }
+
+    fecharModal();
+
+  } catch (erro) {
+    console.error(erro);
+    erroModal.textContent =
+      "Não foi possível salvar. Verifique as permissões.";
+  } finally {
+    salvar.disabled = false;
+  }
+});
+
+document.getElementById("sair").onclick = async () => {
+  if (cancelarEscuta) cancelarEscuta();
+  await signOut(auth);
+  window.location.replace("login.html");
+};
+
+onAuthStateChanged(auth, async (usuario) => {
+  if (cancelarEscuta) {
+    cancelarEscuta();
+    cancelarEscuta = null;
+  }
+
+  if (!usuario) {
+    window.location.replace("login.html");
+    return;
+  }
+
+  try {
+    const gerencia = await getDoc(
+      doc(db, "gerencias", usuario.uid)
+    );
+
+    if (!gerencia.exists()) {
+      throw new Error("Conta não autorizada");
+    }
+
+    const dados = gerencia.data();
+
+    if (
+      dados.papel !== "gerencia" ||
+      !dados.barbeariaId
+    ) {
+      throw new Error("Cadastro de gerência inválido");
+    }
+
+    barbeariaId = dados.barbeariaId;
+
+    const barbearia = await getDoc(
+      doc(db, "barbearias", barbeariaId)
+    );
+
+    if (!barbearia.exists() ||
+        barbearia.data().ativo !== true) {
+      throw new Error("Barbearia não disponível");
+    }
+
+    document.getElementById("nomeBarbearia").textContent =
+      barbearia.data().nome || "Minha barbearia";
+
+    profissionaisRef = collection(
+      db, "barbearias", barbeariaId, "profissionais"
+    );
+
+    document.getElementById("novo").disabled = false;
+
+    cancelarEscuta = onSnapshot(
+      profissionaisRef,
+      (resultado) => {
+        profissionais = resultado.docs.map(d => ({
+          id: d.id,
+          ...d.data()
+        }));
+        mensagem.textContent = "";
+        renderizar();
+      },
+      mostrarErro
+    );
+
+  } catch (erro) {
+    console.error(erro);
+    mensagem.textContent =
+      "Acesso não autorizado ou permissões insuficientes.";
+    lista.replaceChildren();
+    lista.appendChild(criarElemento(
+      "div", "vazio",
+      "Não foi possível carregar o painel."
+    ));
+  }
+});
+</script>
+
+</body>
+</html>
