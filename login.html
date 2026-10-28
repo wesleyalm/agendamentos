@@ -1,0 +1,331 @@
+
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#101010">
+<title>Gerência | MWfix Agendamentos</title>
+
+<style>
+:root {
+  --ouro: #d4af37;
+  --fundo: #101010;
+  --painel: #1c1c1c;
+  --borda: #383838;
+  --texto: #fff;
+  --cinza: #aaa;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--fundo);
+  color: var(--texto);
+  font-family: Arial, sans-serif;
+  display: flex;
+  flex-direction: column;
+}
+header {
+  text-align: center;
+  padding: 35px 15px 20px;
+}
+.logo {
+  width: 78px;
+  height: 78px;
+  margin: 0 auto 18px;
+  border: 2px solid var(--ouro);
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  color: var(--ouro);
+  font-size: 34px;
+}
+h1 {
+  color: var(--ouro);
+  font-size: 23px;
+  margin: 0 0 8px;
+}
+header p {
+  color: var(--cinza);
+  font-size: 14px;
+}
+main {
+  width: 100%;
+  max-width: 440px;
+  margin: auto;
+  padding: 20px;
+}
+.card {
+  background: var(--painel);
+  border: 1px solid var(--borda);
+  border-radius: 16px;
+  padding: 26px 22px;
+}
+h2 {
+  margin: 0 0 10px;
+  font-size: 21px;
+}
+.descricao {
+  color: var(--cinza);
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+input {
+  width: 100%;
+  padding: 16px;
+  margin-bottom: 20px;
+  border-radius: 9px;
+  border: 1px solid var(--borda);
+  background: #111;
+  color: white;
+  font-size: 16px;
+}
+input:focus {
+  outline: 1px solid var(--ouro);
+}
+.senha-area {
+  position: relative;
+}
+.senha-area input {
+  padding-right: 85px;
+}
+.mostrar {
+  position: absolute;
+  right: 10px;
+  top: 9px;
+  background: transparent;
+  border: none;
+  color: var(--ouro);
+  padding: 10px;
+  cursor: pointer;
+}
+.entrar {
+  width: 100%;
+  padding: 17px;
+  background: var(--ouro);
+  border: none;
+  border-radius: 9px;
+  color: #111;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+.entrar:disabled {
+  opacity: .5;
+  cursor: wait;
+}
+.mensagem {
+  min-height: 20px;
+  margin-top: 16px;
+  color: #ff9292;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: center;
+}
+.voltar {
+  display: block;
+  margin-top: 24px;
+  text-align: center;
+  color: var(--cinza);
+  text-decoration: none;
+  font-size: 13px;
+}
+footer {
+  text-align: center;
+  padding: 25px;
+  color: #777;
+  font-size: 12px;
+}
+footer span { color: var(--ouro); }
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="logo">✂</div>
+  <h1>ÁREA DA GERÊNCIA</h1>
+  <p>MWfix Agendamentos</p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>Bem-vindo!</h2>
+    <p class="descricao">
+      Entre com as credenciais autorizadas
+      para administrar sua barbearia.
+    </p>
+
+    <form id="formLogin">
+      <label for="email">E-mail</label>
+      <input
+        id="email"
+        type="email"
+        autocomplete="username"
+        placeholder="seuemail@exemplo.com"
+        required>
+
+      <label for="senha">Senha</label>
+      <div class="senha-area">
+        <input
+          id="senha"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Digite sua senha"
+          required>
+        <button class="mostrar" type="button"
+          id="mostrarSenha">Mostrar</button>
+      </div>
+
+      <button class="entrar" id="botaoEntrar"
+        type="submit">ENTRAR</button>
+
+      <div class="mensagem" id="mensagem"
+        role="status" aria-live="polite"></div>
+    </form>
+  </div>
+
+  <a class="voltar" href="index.html">
+    ← Voltar à página inicial
+  </a>
+</main>
+
+<footer>
+  Sistema de agendamentos desenvolvido por
+  <span>MWfix</span>
+</footer>
+
+<script type="module">
+import { initializeApp } from
+  "https://www.gstatic.com/firebasejs/12.4.0/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  signOut,
+  onAuthStateChanged
+} from
+  "https://www.gstatic.com/firebasejs/12.4.0/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc
+} from
+  "https://www.gstatic.com/firebasejs/12.4.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyDP9XvYYFU60mbmAbZQIPLBqjAekFb78Uk",
+  authDomain: "mwfix-agendamentos.firebaseapp.com",
+  projectId: "mwfix-agendamentos",
+  storageBucket: "mwfix-agendamentos.firebasestorage.app",
+  messagingSenderId: "821129339398",
+  appId: "1:821129339398:web:e9bd8e00ba5689d20c9987"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+const form = document.getElementById("formLogin");
+const mensagem = document.getElementById("mensagem");
+const botao = document.getElementById("botaoEntrar");
+
+document.getElementById("mostrarSenha")
+  .addEventListener("click", function() {
+    const campo = document.getElementById("senha");
+    const mostrar = campo.type === "password";
+
+    campo.type = mostrar ? "text" : "password";
+    this.textContent = mostrar ? "Ocultar" : "Mostrar";
+  });
+
+function informar(texto) {
+  mensagem.textContent = texto;
+}
+
+async function verificarGerencia(usuario) {
+  const referencia = doc(db, "gerencias", usuario.uid);
+  const documento = await getDoc(referencia);
+
+  if (!documento.exists()) {
+    throw new Error("sem-permissao");
+  }
+
+  const dados = documento.data();
+
+  if (
+    dados.papel !== "gerencia" ||
+    typeof dados.barbeariaId !== "string" ||
+    !dados.barbeariaId.trim()
+  ) {
+    throw new Error("sem-permissao");
+  }
+
+  return dados.barbeariaId;
+}
+
+form.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+
+  const email = document.getElementById("email")
+    .value.trim();
+
+  const senha = document.getElementById("senha").value;
+
+  botao.disabled = true;
+  botao.textContent = "VERIFICANDO...";
+  informar("");
+
+  try {
+    const resultado = await signInWithEmailAndPassword(
+      auth, email, senha
+    );
+
+    await verificarGerencia(resultado.user);
+
+    window.location.replace("gerencia.html");
+
+  } catch (erro) {
+    if (erro.message === "sem-permissao") {
+      await signOut(auth);
+      informar("Esta conta não possui acesso à gerência.");
+    } else if (
+      erro.code === "auth/invalid-credential" ||
+      erro.code === "auth/wrong-password" ||
+      erro.code === "auth/user-not-found" ||
+      erro.code === "auth/invalid-email"
+    ) {
+      informar("E-mail ou senha incorretos.");
+    } else if (erro.code === "permission-denied") {
+      informar(
+        "O acesso ao cadastro da gerência ainda " +
+        "não foi liberado nas regras do Firestore."
+      );
+    } else {
+      console.error(erro);
+      informar(
+        "Não foi possível entrar. Verifique a conexão " +
+        "e tente novamente."
+      );
+    }
+  } finally {
+    botao.disabled = false;
+    botao.textContent = "ENTRAR";
+  }
+});
+
+// Não redirecionar automaticamente.
+// O painel verificará a sessão novamente.
+onAuthStateChanged(auth, () => {});
+</script>
+
+</body>
+</html>
