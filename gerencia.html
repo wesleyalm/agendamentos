@@ -315,14 +315,7 @@
       <input id="nome" required maxlength="80"
         placeholder="Ex.: João">
 
-      <label for="foto">Endereço da foto no GitHub</label>
-      <input id="foto" type="url"
-        placeholder="https://wesleyalm.github.io/agendamentos/fotos/joao.jpg">
-
-      <p class="descricao">
-        A foto é opcional. Se não preencher, aparecerá
-        um avatar padrão.
-      </p>
+    
 
       <div class="duas-colunas">
         <div>
@@ -420,17 +413,7 @@ function criarElemento(tag, classe, texto) {
   return elemento;
 }
 
-function fotoPermitida(url) {
-  if (!url) return true;
-  try {
-    const endereco = new URL(url);
-    return endereco.protocol === "https:" &&
-      endereco.hostname === "wesleyalm.github.io" &&
-      endereco.pathname.startsWith("/agendamentos/fotos/");
-  } catch {
-    return false;
-  }
-}
+
 
 function renderizar() {
   lista.replaceChildren();
@@ -451,18 +434,9 @@ function renderizar() {
     const card = criarElemento("div", "profissional");
     const perfil = criarElemento("div", "perfil");
 
-    if (p.foto && fotoPermitida(p.foto)) {
-      const imagem = criarElemento("img", "foto");
-      imagem.src = p.foto;
-      imagem.alt = "Foto de " + (p.nome || "profissional");
-      imagem.onerror = () => {
-        imagem.replaceWith(criarElemento("div", "avatar", "✂"));
-      };
-      perfil.appendChild(imagem);
-    } else {
-      perfil.appendChild(criarElemento("div", "avatar", "✂"));
-    }
-
+perfil.appendChild(
+  criarElemento("div", "avatar", "✂")
+);
     const dados = criarElemento("div");
     dados.appendChild(criarElemento("div", "nome", p.nome || "Sem nome"));
     dados.appendChild(criarElemento(
@@ -540,8 +514,7 @@ function abrirModal(profissional = null) {
   document.getElementById("nome").value =
     profissional?.nome || "";
 
-  document.getElementById("foto").value =
-    profissional?.foto || "";
+
 
   document.getElementById("inicio").value =
     profissional?.inicio || "08:00";
@@ -571,7 +544,7 @@ form.addEventListener("submit", async (evento) => {
   evento.preventDefault();
 
   const nome = document.getElementById("nome").value.trim();
-  const foto = document.getElementById("foto").value.trim();
+  
   const inicio = document.getElementById("inicio").value;
   const fim = document.getElementById("fim").value;
   const intervaloInicio =
@@ -586,11 +559,6 @@ form.addEventListener("submit", async (evento) => {
     return;
   }
 
-  if (!fotoPermitida(foto)) {
-    erroModal.textContent =
-      "Use uma foto da pasta /agendamentos/fotos/ do GitHub Pages.";
-    return;
-  }
 
   if (!(inicio < intervaloInicio &&
         intervaloInicio < intervaloFim &&
@@ -606,7 +574,6 @@ form.addEventListener("submit", async (evento) => {
 
   const dados = {
     nome,
-    foto,
     inicio,
     fim,
     intervaloInicio,
