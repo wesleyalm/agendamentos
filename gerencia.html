@@ -265,6 +265,28 @@
       .duas-colunas { grid-template-columns: 1fr 1fr; }
       .topo h1 { font-size: 18px; }
     }
+.dias-semana {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 10px;
+}
+
+.dias-semana label {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.dias-semana input[type="checkbox"] {
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  flex-shrink: 0;
+}
+    
   </style>
 </head>
 
@@ -318,15 +340,15 @@
     
 <div class="campo-dias">
   <label>Dias de trabalho</label>
-  <div class="dias-semana">
-    <label><input type="checkbox" name="diasTrabalho" value="1" checked> Segunda</label>
-    <label><input type="checkbox" name="diasTrabalho" value="2" checked> Terça</label>
-    <label><input type="checkbox" name="diasTrabalho" value="3" checked> Quarta</label>
-    <label><input type="checkbox" name="diasTrabalho" value="4" checked> Quinta</label>
-    <label><input type="checkbox" name="diasTrabalho" value="5" checked> Sexta</label>
-    <label><input type="checkbox" name="diasTrabalho" value="6" checked> Sábado</label>
-    <label><input type="checkbox" name="diasTrabalho" value="0"> Domingo</label>
-  </div>
+<div class="dias-semana">
+  <label><input type="checkbox" name="diasTrabalho" value="1" checked> Segunda</label>
+  <label><input type="checkbox" name="diasTrabalho" value="2" checked> Terça</label>
+  <label><input type="checkbox" name="diasTrabalho" value="3" checked> Quarta</label>
+  <label><input type="checkbox" name="diasTrabalho" value="4" checked> Quinta</label>
+  <label><input type="checkbox" name="diasTrabalho" value="5" checked> Sexta</label>
+  <label><input type="checkbox" name="diasTrabalho" value="6" checked> Sábado</label>
+  <label><input type="checkbox" name="diasTrabalho" value="0"> Domingo</label>
+</div>
 </div>
       <div class="duas-colunas">
         <div>
