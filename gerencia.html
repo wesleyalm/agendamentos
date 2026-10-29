@@ -316,7 +316,18 @@
         placeholder="Ex.: João">
 
     
-
+<div class="campo-dias">
+  <label>Dias de trabalho</label>
+  <div class="dias-semana">
+    <label><input type="checkbox" name="diasTrabalho" value="1" checked> Segunda</label>
+    <label><input type="checkbox" name="diasTrabalho" value="2" checked> Terça</label>
+    <label><input type="checkbox" name="diasTrabalho" value="3" checked> Quarta</label>
+    <label><input type="checkbox" name="diasTrabalho" value="4" checked> Quinta</label>
+    <label><input type="checkbox" name="diasTrabalho" value="5" checked> Sexta</label>
+    <label><input type="checkbox" name="diasTrabalho" value="6" checked> Sábado</label>
+    <label><input type="checkbox" name="diasTrabalho" value="0"> Domingo</label>
+  </div>
+</div>
       <div class="duas-colunas">
         <div>
           <label for="inicio">Entrada</label>
@@ -513,7 +524,11 @@ function abrirModal(profissional = null) {
 
   document.getElementById("nome").value =
     profissional?.nome || "";
+const diasSelecionados = profissional?.diasTrabalho ?? [1, 2, 3, 4, 5, 6];
 
+document.querySelectorAll('input[name="diasTrabalho"]').forEach(caixa => {
+  caixa.checked = diasSelecionados.map(Number).includes(Number(caixa.value));
+});
 
 
   document.getElementById("inicio").value =
@@ -572,13 +587,18 @@ form.addEventListener("submit", async (evento) => {
   salvar.disabled = true;
   erroModal.textContent = "";
 
-  const dados = {
-    nome,
-    inicio,
-    fim,
-    intervaloInicio,
-    intervaloFim
-  };
+  const diasTrabalho = Array.from(
+  document.querySelectorAll('input[name="diasTrabalho"]:checked')
+).map(caixa => Number(caixa.value));
+  
+const dados = {
+  nome,
+  inicio,
+  fim,
+  intervaloInicio,
+  intervaloFim,
+  diasTrabalho
+};
 
   try {
     if (editandoId) {
